@@ -1,4 +1,5 @@
 import json
+import os
 
 class OptionBuilder:
 
@@ -19,8 +20,10 @@ class OptionBuilder:
 
     def writeAttr(self):
 
+        if not os.path.exists('data'):
+            os.makedirs('data')
         for attr in self.attrs:
-            output_file = attr + ".json"
+            output_file = "data/" + attr + ".json"
             tojson = []
             for value in self.attrs[attr]:
                 temp = {"tag":value}
