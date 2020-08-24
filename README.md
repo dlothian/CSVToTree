@@ -43,7 +43,7 @@ Running this program will output a number of files, described below.
 
 #### The Tree File
 
-The tree file contains your language's conjugation data in a [tree data structure](https://en.wikipedia.org/wiki/Tree_(data_structure)] in a JSON file. 
+The tree file contains your language's conjugation data in a [tree data structure](https://en.wikipedia.org/wiki/Tree_(data_structure)) in a JSON file. 
 This file will be found either under the name `conjugation_tree.json` OR whatever the user-specificed `<output_file>` is.
 For example, your JSON tree might look as follows
 
