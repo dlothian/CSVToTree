@@ -5,7 +5,10 @@ import sys
 
 
 def main():
+
     output_file = "conjugation_tree.json"
+    tree_order = None
+
     if len(sys.argv) == 1:
         print("Please include required input file")
         exit()
@@ -20,15 +23,30 @@ def main():
         if not input_file.endswith(".csv"):
             print("Input file must be a comma separated file and have the .csv extension")
             exit()
-    if len(sys.argv) == 3:
+    if len(sys.argv) >= 3:
         output_file = sys.argv[2]
         if not output_file.endswith(".json"):
             print("Selected output file must be a json file (i.e. must have the .json extension)")
             exit()
 
+    if len(sys.argv) == 4:
+        tree_order = sys.argv[3]
+        if not output_file.endswith(".csv"):
+            print("Selected output file must be a csv file (i.e. must have the .csv extension)")
+            exit()
+        try:
+            f = open(tree_order, 'r')
+            f.close()
+        except OSError:
+            print("Tree order file '", tree_order, "' not found")
+            exit()
+    
+        tree_order_file = open(tree_order, 'r')
+        tree_order = tree_order_file.readline().split(',')
+
     c2d = CSVtoDict(input_file)
     dict_input_file, dict_list = c2d.toDict()
-    tb = TreeBuilder(dict_list, output_file)
+    tb = TreeBuilder(dict_list, output_file, tree_order)
     ob = OptionBuilder(dict_list)
 
 

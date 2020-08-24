@@ -4,12 +4,20 @@ import os
 class OptionBuilder:
 
     def __init__(self, dict_list):
+        """[summary]
+
+        Args:
+            dict_list ([type]): [description]
+        """
+
         self.dict_list = dict_list
         self.attrs = {}
         self.removeDupes()
         self.writeAttr()
 
     def removeDupes(self):
+        """[summary]
+        """
         for key in self.dict_list[0].keys():
             self.attrs[key] = set()
 
@@ -19,7 +27,8 @@ class OptionBuilder:
 
 
     def writeAttr(self):
-
+        """[summary]
+        """
         if not os.path.exists('data'):
             os.makedirs('data')
         for attr in self.attrs:
