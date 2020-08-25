@@ -4,10 +4,11 @@ import os
 class OptionBuilder:
 
     def __init__(self, dict_list):
-        """[summary]
+        """Class creates individual JSON files containing all elements of the individual options, 
+        with no duplicates
 
         Args:
-            dict_list ([type]): [description]
+            dict_list (list): List of dictionaries 
         """
 
         self.dict_list = dict_list
@@ -15,8 +16,10 @@ class OptionBuilder:
         self.removeDupes()
         self.writeAttr()
 
+
     def removeDupes(self):
-        """[summary]
+        """
+        Removes duplicates by adding each element to its respective dictionary attr set
         """
         for key in self.dict_list[0].keys():
             self.attrs[key] = set()
@@ -27,7 +30,9 @@ class OptionBuilder:
 
 
     def writeAttr(self):
-        """[summary]
+        """
+        Creates each file using the attr dictionary where each key has a set of unique values.
+        Files are saved to the 'data' folder.
         """
         if not os.path.exists('data'):
             os.makedirs('data')

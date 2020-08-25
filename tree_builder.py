@@ -7,12 +7,27 @@ import sys
 class TreeBuilder:
 
     def __init__(self, input_dict, output_file, keys):
+        """Class takes a list of dictionaries and creates a tree data structure through dictionaries.
+        Calls tree builder function.
+
+        Args:
+            input_dict (list): List of dictionaries
+            output_file (str): Tree output file name
+            keys (list): List of key names, if user specified
+        """
         self.input_dict = input_dict
         self.output_file = output_file
         self.keys = keys
         self.toTree()
         
+
     def toTree(self):
+        """
+        Function does the following:
+        1. Ensures that the tree order submitted is valud
+        2. Calls tree builder function
+        3. Writes tree to output file
+        """
 
         tree = {}
         if not self.keys:
@@ -30,7 +45,6 @@ class TreeBuilder:
         for i in range(len(self.keys)):
             print("Level", i, ":", self.keys[i])
 
-
         for verb in self.input_dict: # Going through each dictionary in new list
             self.recursiveTree(tree, verb, 0)
 
@@ -41,28 +55,29 @@ class TreeBuilder:
 
 
     def recursiveTree(self, tree, verb, index):
-        """[summary]
+        """
+        Recursively creates
 
         Args:
-            tree ([type]): [description]
-            verb ([type]): [description]
-            index ([type]): [description]
+            tree (dict or list): Tree at different levels, list if it's the last level.
+            verb (dict): Dictionary that contains a line from the original csv
+            index (int): Index of position of keys array, denoting which level of the tree is current
 
         Returns:
             [type]: [description]
         """
                 
-        if verb[self.keys[index]] not in tree:
-            if index == (len(self.keys) - 1):
-                tree.append(verb[self.keys[index]])
-                return
+        if verb[self.keys[index]] not in tree: # If this node is not currently at this level, add it
+            if index == (len(self.keys) - 1): # if current level is the last level
+                tree.append(verb[self.keys[index]]) # add it to the last level list
+                return # move on to next verb
 
-            elif index == (len(self.keys) - 2):
-                tree[verb[self.keys[index]]] = []
+            elif index == (len(self.keys) - 2): # else if current level is second last level
+                tree[verb[self.keys[index]]] = [] # add it to dictionary with empty list value (i.e. the last level)
 
-            else:
-                tree[verb[self.keys[index]]] = {}
+            else: # if any other level
+                tree[verb[self.keys[index]]] = {} # add it to dictionary with empty dictionary value for the next level.
          
-        self.recursiveTree(tree[verb[self.keys[index]]], verb, index+1)
+        self.recursiveTree(tree[verb[self.keys[index]]], verb, index+1) #if this node *is* at the current level, check if next node is at next level.
         
         return 
