@@ -31,8 +31,8 @@ def main():
 
     if len(sys.argv) == 4:
         tree_order = sys.argv[3]
-        if not output_file.endswith(".csv"):
-            print("Selected output file must be a csv file (i.e. must have the .csv extension)")
+        if not tree_order.endswith(".csv"):
+            print("Selected tree order file must be a csv file (i.e. must have the .csv extension)")
             exit()
         try:
             f = open(tree_order, 'r')
@@ -45,9 +45,9 @@ def main():
         tree_order = tree_order_file.readline().split(',')
 
     c2d = CSVtoDict(input_file)
-    dict_input_file, dict_list = c2d.toDict()
+    dict_list, attr_dict_list = c2d.execute()
     tb = TreeBuilder(dict_list, output_file, tree_order)
-    ob = OptionBuilder(dict_list)
+    ob = OptionBuilder(attr_dict_list, tree_order)
 
 
 
