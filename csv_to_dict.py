@@ -22,6 +22,7 @@ class CSVtoDict:
     def execute(self):
         self.columnTitles()
         self.toDict()
+        self.adjustVAIT()
         self.assignRemoveAttributes()
 
         # self.removeDupe(self.attr_list_of_dicts)
@@ -59,6 +60,32 @@ class CSVtoDict:
         
         return [dict(t) for t in {tuple(d.items()) for d in removeFrom}]
         
+    def adjustVAIT(self):
+        rmv = []
+        addto = []
+        for d in self.list_of_dicts:
+            if d["verb_type"] == "VAIT":
+                rmv.append(d)
+                temp_VAI = {key: value[:] for key, value in d.items()}
+                temp_VAI['verb_type'] = "VAI"
+                addto.append(temp_VAI)
+
+                temp_VTA = {key: value[:] for key, value in d.items()}
+                temp_VTA['verb_type'] = 'VTA'
+                temp_VTA['verb_translation'] += " him/her/it"
+                addto.append(temp_VTA)
+
+                temp_VTI = {key: value[:] for key, value in d.items()}
+                temp_VTI['verb_type'] = 'VTI'
+                temp_VTI['verb_translation'] += " it"
+                addto.append(temp_VTI)
+
+        for r in rmv:
+            self.list_of_dicts.remove(r)
+        for a in addto:
+            self.list_of_dicts.append(a)
+        
+        del rmv, addto
 
     def writeOutputs(self, outputs, file_name):
         if not os.path.exists('csv2tree_data'):
