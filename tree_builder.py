@@ -31,20 +31,20 @@ class TreeBuilder:
         tree = {}
         if not self.keys:
             self.keys = list(self.input_dict[0].keys())
-        else:
-            temp_keys = []
-            for i in self.keys:
-                temp_keys.append(i)
-            temp_keys.sort()
-            original_keys = list(self.input_dict[0].keys())
-            original_keys.sort()
+        # else:
+        #     temp_keys = []
+        #     for i in self.keys:
+        #         temp_keys.append(i)
+        #     temp_keys.sort()
+        #     original_keys = list(self.input_dict[0].keys())
+        #     original_keys.sort()
 
-            if temp_keys != original_keys:
-                print("Tree order file does not contain valid attribute names")
-                print("Tree order file attributes must be of the same name as the row headers in input file")
-                print("Your file's options are", original_keys)
-                print("Your order attribute names are", temp_keys)
-                exit()
+        #     if temp_keys != original_keys:
+        #         print("Tree order file does not contain valid attribute names")
+        #         print("Tree order file attributes must be of the same name as the row headers in input file")
+        #         print("Your file's options are", original_keys)
+        #         print("Your order attribute names are", temp_keys)
+        #         exit()
 
         print("Your tree will be built with the following structure:")
         for i in range(len(self.keys)):
@@ -82,7 +82,7 @@ class TreeBuilder:
 
             else: # if any other level
                 tree[verb[self.keys[index]]] = {} # add it to dictionary with empty dictionary value for the next level.
-                
+
         if index < (len(self.keys) - 1):
             self.recursiveTree(tree[verb[self.keys[index]]], verb, index+1) #if this node *is* at the current level, check if next node is at next level.
         

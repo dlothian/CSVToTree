@@ -1,5 +1,5 @@
 import csv
-import os
+import os, json
 
 class CSVtoDict:
 
@@ -23,6 +23,7 @@ class CSVtoDict:
         self.columnTitles()
         self.toDict()
         self.adjustVAIT()
+        self.conjugationFile()
         self.assignRemoveAttributes()
 
         # self.removeDupe(self.attr_list_of_dicts)
@@ -41,6 +42,13 @@ class CSVtoDict:
             reader = csv.reader(f)
             self.headers = next(reader)
 
+    def conjugationFile(self):
+        if not os.path.exists('csv2tree_data/app_json_files'):
+            os.makedirs('csv2tree_data/app_json_files')
+        output_file = "csv2tree_data/app_json_files/conjugation.json"
+
+        with open(output_file, 'w') as json_file:
+            json.dump(self.list_of_dicts, json_file,indent=4)
 
     def toDict(self):
         """Reads in CSV file and 
@@ -68,15 +76,18 @@ class CSVtoDict:
                 rmv.append(d)
                 temp_VAI = {key: value[:] for key, value in d.items()}
                 temp_VAI['verb_type'] = "VAI"
+                temp_VAI['gloss'] = temp_VAI['gloss'].replace('VAIT', 'VAI')
                 addto.append(temp_VAI)
 
                 temp_VTA = {key: value[:] for key, value in d.items()}
                 temp_VTA['verb_type'] = 'VTA'
+                temp_VTA['gloss'] = temp_VTA['gloss'].replace('VAIT','VTA')
                 temp_VTA['verb_translation'] += " him/her/it"
                 addto.append(temp_VTA)
 
                 temp_VTI = {key: value[:] for key, value in d.items()}
                 temp_VTI['verb_type'] = 'VTI'
+                temp_VTI['gloss'] = temp_VTI['gloss'].replace('VAIT','VTI')
                 temp_VTI['verb_translation'] += " it"
                 addto.append(temp_VTI)
 
