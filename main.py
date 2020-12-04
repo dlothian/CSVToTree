@@ -44,7 +44,7 @@ def main():
         tree_order_file = open(tree_order, 'r')
         tree_order = tree_order_file.readline().split(',')
 
-    c2d = CSVtoDict(input_file)
+    c2d = CSVtoDict(input_file=input_file, order=tree_order)
     dict_list, attr_dict_list = c2d.execute()
     tb = TreeBuilder(dict_list, output_file, tree_order)
     ob = OptionBuilder(attr_dict_list, tree_order)

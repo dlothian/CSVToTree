@@ -3,13 +3,14 @@ import os, json
 
 class CSVtoDict:
 
-    def __init__(self, input_file, delimiter=None):
+    def __init__(self, input_file, delimiter=None, order=None):
         """Initalizes relevant variables.
 
         Args:
             input_file (str): Input CSV file to be read and turned into a list 
             of python dictionaries.
         """
+        self.order = order
         self.input_file = input_file  
         self.list_of_dicts = []
         self.attr_list_of_dicts = []
@@ -22,7 +23,10 @@ class CSVtoDict:
     def execute(self):
         self.columnTitles()
         self.toDict()
-        self.adjustVAIT()
+        # self.adjustVAIT()
+        if not self.order:
+            p, a = self.assignRemoveAttributesTitles()
+            self.order = p
         self.conjugationFile()
         self.assignRemoveAttributes()
 
@@ -46,9 +50,18 @@ class CSVtoDict:
         if not os.path.exists('csv2tree_data/app_json_files'):
             os.makedirs('csv2tree_data/app_json_files')
         output_file = "csv2tree_data/app_json_files/conjugation.json"
+        conj_list = []
+        for i in self.list_of_dicts:
+            c = {}
+            c['conjugation'] = i['conjugation']
+            for j in i:
+                if j in self.order:
+                    c[j] = i[j]
+            conj_list.append(c)
+
 
         with open(output_file, 'w') as json_file:
-            json.dump(self.list_of_dicts, json_file,indent=4)
+            json.dump(conj_list, json_file,indent=4)
 
     def toDict(self):
         """Reads in CSV file and 
@@ -139,9 +152,11 @@ class CSVtoDict:
         """
         primary, attribute = self.assignRemoveAttributesTitles()
         temp_dicts_list = []
+        conj_file_list = []
         for col in self.list_of_dicts:
             no_attr = {}
             attr = {}
+            conj = {}
             for x in col:
                 
                 if x in primary:
