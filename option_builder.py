@@ -19,22 +19,13 @@ class OptionBuilder:
         self.writeAttr()
 
 
-    def orderAttrs(self):
-        """
-        If tree order is given, data should be ordered in the same way.
-        """
-
-
     def removeDupes(self):
         """
         Removes duplicates by adding each element to its respective dictionary attr set
         """
-        if self.data_order:
-            for key in self.data_order:
-                self.attrs[key] = set()
-        else:
-            for key in self.attr_dict_list[0].keys():
-                self.attrs[key] = set()
+        
+        for key in self.attr_dict_list[0].keys():
+            self.attrs[key] = set()
 
         for d in self.attr_dict_list:
             for attr in d:
@@ -53,8 +44,10 @@ class OptionBuilder:
         if not os.path.exists('csv2tree_data/app_json_files'):
             os.makedirs('csv2tree_data/app_json_files')
         major_output_file = "csv2tree_data/app_json_files/information.json"
-        major = []
+        major = {}
         for attr in self.attrs:
+            if attr not in self.data_order and self.data_order:
+                continue
             output_file = "csv2tree_data/app_json_files/" + attr + ".json"
             tojson = {"name":attr, "children":[]}
             for value in self.attrs[attr]:
@@ -64,7 +57,15 @@ class OptionBuilder:
 
             with open(output_file, 'w') as json_file:
                 json.dump(tojson, json_file,indent=4)
-            major.append(tojson)
+            major[attr] = tojson
+
+        if self.data_order:
+            temp = []
+            for d in self.data_order:
+                temp.append(major[d])
+            major = temp
+        else:
+            major = list(major.values())
 
         with open(major_output_file, 'w') as json_file:
             json.dump(major, json_file,indent=4)

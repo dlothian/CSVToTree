@@ -1,15 +1,16 @@
 import csv
-import os
+import os, json
 
 class CSVtoDict:
 
-    def __init__(self, input_file, delimiter=None):
+    def __init__(self, input_file, delimiter=None, order=None):
         """Initalizes relevant variables.
 
         Args:
             input_file (str): Input CSV file to be read and turned into a list 
             of python dictionaries.
         """
+        self.order = order
         self.input_file = input_file  
         self.list_of_dicts = []
         self.attr_list_of_dicts = []
@@ -22,6 +23,11 @@ class CSVtoDict:
     def execute(self):
         self.columnTitles()
         self.toDict()
+        # self.adjustVAIT()
+        if not self.order:
+            p, a = self.assignRemoveAttributesTitles()
+            self.order = p
+        self.conjugationFile()
         self.assignRemoveAttributes()
 
         # self.removeDupe(self.attr_list_of_dicts)
@@ -40,6 +46,22 @@ class CSVtoDict:
             reader = csv.reader(f)
             self.headers = next(reader)
 
+    def conjugationFile(self):
+        if not os.path.exists('csv2tree_data/app_json_files'):
+            os.makedirs('csv2tree_data/app_json_files')
+        output_file = "csv2tree_data/app_json_files/conjugation.json"
+        conj_list = []
+        for i in self.list_of_dicts:
+            c = {}
+            c['conjugation'] = i['conjugation']
+            for j in i:
+                if j in self.order:
+                    c[j] = i[j]
+            conj_list.append(c)
+
+
+        with open(output_file, 'w') as json_file:
+            json.dump(conj_list, json_file,indent=4)
 
     def toDict(self):
         """Reads in CSV file and 
@@ -59,6 +81,35 @@ class CSVtoDict:
         
         return [dict(t) for t in {tuple(d.items()) for d in removeFrom}]
         
+    def adjustVAIT(self):
+        rmv = []
+        addto = []
+        for d in self.list_of_dicts:
+            if d["verb_type"] == "VAIT":
+                rmv.append(d)
+                temp_VAI = {key: value[:] for key, value in d.items()}
+                temp_VAI['verb_type'] = "VAI"
+                temp_VAI['gloss'] = temp_VAI['gloss'].replace('VAIT', 'VAI')
+                addto.append(temp_VAI)
+
+                temp_VTA = {key: value[:] for key, value in d.items()}
+                temp_VTA['verb_type'] = 'VTA'
+                temp_VTA['gloss'] = temp_VTA['gloss'].replace('VAIT','VTA')
+                temp_VTA['verb_translation'] += " him/her/it"
+                addto.append(temp_VTA)
+
+                temp_VTI = {key: value[:] for key, value in d.items()}
+                temp_VTI['verb_type'] = 'VTI'
+                temp_VTI['gloss'] = temp_VTI['gloss'].replace('VAIT','VTI')
+                temp_VTI['verb_translation'] += " it"
+                addto.append(temp_VTI)
+
+        for r in rmv:
+            self.list_of_dicts.remove(r)
+        for a in addto:
+            self.list_of_dicts.append(a)
+        
+        del rmv, addto
 
     def writeOutputs(self, outputs, file_name):
         if not os.path.exists('csv2tree_data'):
@@ -101,9 +152,11 @@ class CSVtoDict:
         """
         primary, attribute = self.assignRemoveAttributesTitles()
         temp_dicts_list = []
+        conj_file_list = []
         for col in self.list_of_dicts:
             no_attr = {}
             attr = {}
+            conj = {}
             for x in col:
                 
                 if x in primary:
